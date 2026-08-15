@@ -1,0 +1,6 @@
+{
+  "name": "GharBudget & GaunSewa",
+  "description": "Comprehensive household budget, savings goals, remittance tracker, and community job & service marketplace tailored for Nepal.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
