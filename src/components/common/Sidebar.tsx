@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 import {
   Home,
   Clock,
@@ -10,15 +11,18 @@ import {
   CheckSquare,
   LogOut,
   Repeat,
+  User,
+  Shield,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface SidebarProps {
   isOpenMobile?: boolean;
   onCloseMobile?: () => void;
+  user?: { full_name?: string | null; email?: string; role?: string } | null;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ isOpenMobile, onCloseMobile }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ isOpenMobile, onCloseMobile, user }) => {
   const {
     activeApp,
     setActiveApp,
@@ -26,9 +30,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpenMobile, onCloseMobile })
     setActiveGBView,
     activeGSView,
     setActiveGSView,
-    currentUser,
-    logout,
   } = useApp();
+  const { logout } = useAuth();
 
   const handleGBNav = (view: typeof activeGBView) => {
     setActiveGBView(view);
@@ -223,27 +226,35 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpenMobile, onCloseMobile })
           <span>Settings</span>
         </button>
 
-        {activeApp === 'gaunsewa' && (
-          <button
-            onClick={logout}
-            className="w-full flex items-center gap-3.5 px-4 py-2 rounded-lg text-sm font-medium text-rose-600 hover:bg-rose-50 transition-colors"
-          >
-            <LogOut className="w-4 h-4 shrink-0" />
-            <span>Logout</span>
-          </button>
-        )}
+        <button
+          onClick={logout}
+          className="w-full flex items-center gap-3.5 px-4 py-2 rounded-lg text-sm font-medium text-rose-600 hover:bg-rose-50 transition-colors"
+        >
+          <LogOut className="w-4 h-4 shrink-0" />
+          <span>Logout</span>
+        </button>
 
         {/* User Card */}
         <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white border border-[#E2EAE5] shadow-xs">
-          <img
-            src={currentUser.avatarUrl}
-            alt={currentUser.name}
-            referrerPolicy="no-referrer"
-            className="w-9 h-9 rounded-full object-cover ring-2 ring-[#005B48]/10"
-          />
+          <div className="w-9 h-9 rounded-full bg-[#005B48]/10 flex items-center justify-center ring-2 ring-[#005B48]/10">
+            {user?.role === 'admin' ? (
+              <Shield className="w-5 h-5 text-[#005B48]" />
+            ) : (
+              <User className="w-5 h-5 text-[#005B48]" />
+            )}
+          </div>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold text-slate-800 truncate">{currentUser.name}</p>
-            <p className="text-[11px] text-slate-500 truncate">{currentUser.email}</p>
+            <p className="text-xs font-semibold text-slate-800 truncate">{user?.full_name || 'User'}</p>
+            <p className="text-[11px] text-slate-500 truncate">{user?.email}</p>
+            {user?.role && (
+              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold mt-1 ${
+                user.role === 'admin' ? 'bg-purple-100 text-purple-700' :
+                user.role === 'user' ? 'bg-emerald-100 text-emerald-700' :
+                'bg-slate-100 text-slate-600'
+              }`}>
+                {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+              </span>
+            )}
           </div>
         </div>
       </div>
